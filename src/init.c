@@ -42,7 +42,11 @@ int virg_init(virginian *v)
 	VIRG_CHECK(pthread_mutex_init(&v->slot_lock, NULL), "Could not init mutex")
 
 	// set proper flags, first one enables mapped memory
-	cudaSetDeviceFlags(cudaDeviceMapHost | cudaDeviceScheduleSpin | cudaDeviceScheduleBlockingSync);
+	//cudaSetDeviceFlags(cudaDeviceMapHost | cudaDeviceScheduleSpin | cudaDeviceScheduleBlockingSync);
+	cudaSetDeviceFlags(cudaDeviceMapHost);
+	cudaSetDeviceFlags(cudaDeviceScheduleSpin);
+	cudaSetDeviceFlags(cudaDeviceScheduleBlockingSync);
+
 	VIRG_CUDCHK("set device flags");
 
 	// initialize cuda context

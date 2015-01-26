@@ -1,6 +1,6 @@
 
 # set config to debug, release
-CONFIG = release
+CONFIG = debug
 
 # file with main function
 ENTRY_POINT = 
@@ -8,12 +8,12 @@ ENTRY_POINT =
 # custom compiler declarations
 CUSTOM_FLAGS = #-D VIRG_DEBUG #-D VIRG_NOPINNED #-D VIRG_DEBUG_SLOTS
 
-GCC = /usr/bin/gcc-4.4
-GPP = /usr/bin/g++-4.4
+GCC = /usr/bin/gcc
+GPP = /usr/bin/g++
 CUDA = /usr/local/cuda
 NVCC = $(CUDA)/bin/nvcc
 CUDA_INCLUDE = $(CUDA)/include
-CUDA_LIBRARY = $(CUDA)/lib
+CUDA_LIBRARY = /usr/local/cuda
 GTEST = ../gtest
 
 FLAGS = -Wall -Wextra -std=c99
@@ -82,7 +82,7 @@ opcodelist.c: opcodelist.awk virginian.h
 ../db/comparedb:
 	make -s -C ../db clean
 	make -s -C ../db
-	../db/generate ../db/comparedb 8000000
+	../db/generate ../db/comparedb 80000
 
 ptx: vm/vm_gpu.cu
 	$(NVCC) $(CUSTOM_FLAGS) $(INCLUDE_FLAGS) --ptxas-options="-v" -arch=sm_20 -g -ptx $< -o vm_gpu.ptx

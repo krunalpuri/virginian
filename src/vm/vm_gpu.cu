@@ -118,7 +118,7 @@ int virg_vm_gpu(virginian *v, virg_vm *vm_, virg_tablet_meta **tab, virg_tablet_
 	if(v->use_stream == 0 && v->use_mmap == 0)
 	{
 		// copy virtual machine context to constant memory
-		cudaMemcpyToSymbol((char*)&vm, (char*)vm_,
+		cudaMemcpyToSymbol(vm,vm_,
 			sizeof(virg_vm), 0, cudaMemcpyHostToDevice);
 		VIRG_CUDCHK("serial const memcpy 1");
 
@@ -126,7 +126,7 @@ int virg_vm_gpu(virginian *v, virg_vm *vm_, virg_tablet_meta **tab, virg_tablet_
 		// we only need to do this once for multiple kernel calls because the
 		// information about the column spacing is identical between all result
 		// tablets
-		cudaMemcpyToSymbol((char*)&meta, (char*)res[0],
+		cudaMemcpyToSymbol(meta,(char *)res[0],
 			sizeof(virg_tablet_meta), sizeof(virg_tablet_meta),
 			cudaMemcpyHostToDevice);
 		VIRG_CUDCHK("serial const memcpy 2");
@@ -149,7 +149,7 @@ int virg_vm_gpu(virginian *v, virg_vm *vm_, virg_tablet_meta **tab, virg_tablet_
 
 			VIRG_CUDCHK("before serial const 2 memcpy");
 			// copy data tablet meta information to constant memory
-			cudaMemcpyToSymbol((char*)&meta, (char*)tab[0],
+			cudaMemcpyToSymbol(meta,(char *)tab[0],
 				sizeof(virg_tablet_meta), 0, cudaMemcpyHostToDevice);
 			VIRG_CUDCHK("serial const 2 memcpy");
 
@@ -249,7 +249,7 @@ int virg_vm_gpu(virginian *v, virg_vm *vm_, virg_tablet_meta **tab, virg_tablet_
 	else if(v->use_stream)
 	{
 		// copy virtual machine context to GPU constant memory
-		cudaMemcpyToSymbol((char*)&vm, (char*)vm_,
+		cudaMemcpyToSymbol(vm,(char *)vm_,
 			sizeof(virg_vm), 0, cudaMemcpyHostToDevice);
 		VIRG_CUDCHK("const memcpy");
 
@@ -348,7 +348,7 @@ int virg_vm_gpu(virginian *v, virg_vm *vm_, virg_tablet_meta **tab, virg_tablet_
 			VIRG_CUDCHK("tab memcpy");
 
 			// start tablet meta to constant memory memcpy for this stream
-			cudaMemcpyToSymbolAsync((char*)&meta, (char*)tab[0],
+			cudaMemcpyToSymbolAsync(meta,(char *)tab[0],
 				sizeof(virg_tablet_meta), i * 2 * sizeof(virg_tablet_meta),
 				cudaMemcpyHostToDevice, stream[i]);
 			VIRG_CUDCHK("tab meta");
@@ -357,7 +357,7 @@ int virg_vm_gpu(virginian *v, virg_vm *vm_, virg_tablet_meta **tab, virg_tablet_
 			// constant memory area yet
 			if(!slot_wait) {
 				// copy result meta information for this stream
-				cudaMemcpyToSymbolAsync((char*)&meta, (char*)res[0],
+				cudaMemcpyToSymbolAsync(meta, (char *)res[0],
 					sizeof(virg_tablet_meta), (i * 2 + 1) * sizeof(virg_tablet_meta),
 					cudaMemcpyHostToDevice, stream[i]);
 				VIRG_CUDCHK("res meta");
@@ -450,16 +450,16 @@ int virg_vm_gpu(virginian *v, virg_vm *vm_, virg_tablet_meta **tab, virg_tablet_
 #endif
 
 		// copy virtual machine context into gpu constant memory
-		cudaMemcpyToSymbol((char*)&vm, (char*)vm_,
+		cudaMemcpyToSymbol(vm, (char*)vm_,
 			sizeof(virg_vm), 0, cudaMemcpyHostToDevice);
 		// copy result tablet meta data into gpu constant memory
 		// this needs to be done only once since the column sizes etc don't
 		// change
-		cudaMemcpyToSymbol((char*)&meta, (char*)res[0],
+		cudaMemcpyToSymbol(meta,res[0],
 			sizeof(virg_tablet_meta), sizeof(virg_tablet_meta), cudaMemcpyHostToDevice);
 		VIRG_CUDCHK("mapped const memcpy");
 
-		cudaMemcpyToSymbol((char*)&meta, (char*)tab[0],
+		cudaMemcpyToSymbol(meta, (char*)tab[0],
 			sizeof(virg_tablet_meta), 0, cudaMemcpyHostToDevice);
 		VIRG_CUDCHK("mapped const 2 memcpy");
 
@@ -481,7 +481,7 @@ int virg_vm_gpu(virginian *v, virg_vm *vm_, virg_tablet_meta **tab, virg_tablet_
 
 			// copy tablet meta information to gpu constant memory
 			VIRG_CUDCHK("before const 2 memcpy");
-			cudaMemcpyToSymbol((char*)&meta, (char*)tab[0],
+			cudaMemcpyToSymbol(meta, (char*)tab[0],
 				sizeof(virg_tablet_meta), 0, cudaMemcpyHostToDevice);
 			VIRG_CUDCHK("const 2 memcpy");
 
@@ -493,12 +493,12 @@ int virg_vm_gpu(virginian *v, virg_vm *vm_, virg_tablet_meta **tab, virg_tablet_
 
 			unsigned zero = 0;
 			// copy 0 into the result row counter
-			cudaMemcpyToSymbol((char*)&row_counter, (char*)&zero,
+			cudaMemcpyToSymbol(row_counter, (char*)&zero,
 				sizeof(unsigned), 0, cudaMemcpyHostToDevice);
 			// copy 0 into the result row buffer counter
-			cudaMemcpyToSymbol((char*)&rowbuff_counter, (char*)&zero,
+			cudaMemcpyToSymbol(rowbuff_counter, (char*)&zero,
 				sizeof(unsigned), 0, cudaMemcpyHostToDevice);
-			cudaMemcpyToSymbol((char*)&threadblock_order, (char*)&zero,
+			cudaMemcpyToSymbol(threadblock_order, (char*)&zero,
 				sizeof(unsigned), 0, cudaMemcpyHostToDevice);
 			cudaMemset((char*)v->gpu_slots + VIRG_TABLET_SIZE, 0,
 				sizeof(unsigned) * blocks);

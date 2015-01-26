@@ -45,7 +45,7 @@ int main()
 	v.use_mmap = 0;		// don't use mapped memory
 
 	// execute query
-	virg_query(&v, &r, "select id, col0 from test where col0 <= 25");
+	virg_query(&v, &r, "select id, col0 from test");
 
 	// output result column names
 	unsigned j;
